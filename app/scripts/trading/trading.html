@@ -1,0 +1,134 @@
+<div style="width:100%" layout="row">
+    <div flex layout="column" tabIndex="-1" role="main" class="md-whiteframe-z2">
+        <div layout="row" class="md-whiteframe-z1">
+            <md-toolbar class="md-accent">
+                <div class="md-toolbar-tools">
+                    <md-truncate flex>
+                        Gestion des achats & ventes
+                    </md-truncate>
+                </div>
+            </md-toolbar>
+        </div>
+        <md-content layout-padding>
+            <div>
+                <form name="userForm" novalidate>
+
+                    <div layout-gt-xs="row">
+                        <md-button disabled><h3 class="md-headline">{{newEntry.id ? newEntry.id : 'new'}}</h3>
+                        </md-button>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Marque & Modèle*</label>
+                            <input ng-model="newEntry.make" type="text">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Matricule*</label>
+                            <input ng-model="newEntry.vin" type="text">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Vendeur</label>
+                            <input ng-model="newEntry.seller" type="text">
+                        </md-input-container>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Date d'achat</label>
+                            <md-datepicker ng-model="newEntry.buyDate" md-placeholder="Enter date"></md-datepicker>
+                        </md-input-container>
+                    </div>
+                    <div layout-gt-xs="row">
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Observations</label>
+                            <input ng-model="newEntry.remarks" type="text">
+                        </md-input-container>
+                        <md-switch class="md-block" flex-gt-xs ng-model="newEntry.selled" aria-label="Switch 2"
+                                   ng-true-value="'oui'" ng-false-value="'non'"
+                                   class="md-warn">
+                            Vendue ? {{ data.cb2 }}
+                        </md-switch>
+                    </div>
+                    <div ng-show="newEntry.selled == 'oui'">
+                        <h2>Informations de vente</h2>
+                        <div layout-gt-xs="row">
+                            <md-input-container class="md-block" flex-gt-xs>
+                                <label>Acheteur</label>
+                                <input ng-model="newEntry.buyer" ng-required="true">
+                            </md-input-container>
+                            <md-input-container class="md-block" flex-gt-xs>
+                                <label>Date de vente</label>
+                                <md-datepicker ng-model="sellDate" md-placeholder="Enter date"></md-datepicker>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                        <md-button class="md-raised md-primary" ng-click="saveTrading()">Savegarder
+                        </md-button>
+                        <md-button class="md-raised md-info" ng-click="emptyNewEntry()">Nouveaux Achat
+                        </md-button>
+                    </section>
+                </form>
+            </div>
+        </md-content>
+
+        <md-toolbar class="md-primary" layout="row">
+            <div class="md-toolbar-tools">
+                <md-truncate flex>
+                </md-truncate>
+            </div>
+        </md-toolbar>
+
+        <md-table-container>
+            <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}" ng-model="selected"
+                   md-progress="promise">
+                <thead ng-if="!options.decapitate" md-head md-order="query.order" md-on-reorder="logOrder">
+                <tr md-row>
+                    <th md-column md-numeric md-order-by="id" md-desc><span>Numéro</span></th>
+                    <th md-column md-desc><span>Date D'achat</span></th>
+                    <th md-column md-order-by="make" md-column-filter="make"><span>Marque & Modèle</span></th>
+                    <th md-column md-order-by="vin"><span>Matricule</span></th>
+                    <th md-column md-order-by="seller"><span>Vendeur</span></th>
+                    <th md-column md-order-by="buyer"><span>Acheteur</span></th>
+                    <th md-column md-order-by="sellDate"><span>Date de vente</span></th>
+                    <th md-column md-order-by="remarks"><span>Observations</span></th>
+                    <th md-column><span></span></th>
+                </tr>
+                <tr md-row>
+                    <th md-column>
+                        <md-input-container class="md-block" flex-gt-xs>
+                            <label>Acheteur</label>
+                            <input ng-model="newEntry.buyer" ng-required="true">
+                        </md-input-container>
+                    </th>
+                    <th md-column><span>Date D'achat</span></th>
+                    <th md-column><span>Marque & Modèle</span></th>
+                    <th md-column><span>Matricule</span></th>
+                    <th md-column><span>Vendeur</span></th>
+                    <th md-column><span>Acheteur</span></th>
+                    <th md-column><span>Date de vente</span></th>
+                    <th md-column><span>Observations</span></th>
+                    <th md-column><span></span></th>
+                </tr>
+                </thead>
+                <tbody md-body>
+                <tr md-row md-select="trading" md-on-select="logItem" md-auto-select="options.autoSelect"
+                    ng-repeat="trading in tradings | filter: filter.search | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+                    <td md-cell>{{trading.id}}</td>
+                    <td md-cell>{{trading.buyDate}}</td>
+                    <td md-cell>{{trading.make}}</td>
+                    <td md-cell>{{trading.vin}}</td>
+                    <td md-cell>{{trading.seller}}</td>
+
+                    <td md-cell>{{trading.buyer ? trading.buyer : '-' }}</td>
+                    <td md-cell>{{trading.sellDate? trading.sellDate : '-' }}</td>
+                    <td md-cell>{{trading.remarks ? trading.remarks : '-'}}</td>
+                    <td md-cell>
+                        <md-icon class="md-secondary" ng-click="onDelete(trading)" aria-label="Chat"
+                                 md-svg-icon="communication"></md-icon>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+        <md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" md-page="query.page"
+                             md-total="{{tradings.length}}" md-page-select="options.pageSelect"
+                             md-boundary-links="options.boundaryLinks"
+                             md-on-paginate="logPagination"></md-table-pagination>
+    </div>
+</div>
